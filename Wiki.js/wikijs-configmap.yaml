@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DB_HOST: "postgres.wikijs.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_TYPE: "postgres"
+  HA_ACTIVE: "true"
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: wikijs

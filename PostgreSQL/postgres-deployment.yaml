@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres  # Sets Deployment name
+  namespace: wikijs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: postgres
+      app: postgres
+  template:
+    metadata:
+      labels:
+        service: postgres
+        app: postgres
+    spec:
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+      containers:
+        - name: postgres
+          image: postgres:10.1 # Sets Image
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 5432  # Exposes container port
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DATABASE_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                 name: postgres-secret
+                 key: DATABASE_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                 name: postgres-secret
+                 key: DATABASE_PASSWORD
+            - name: TZ
+              value: "America/Recife"
+            - name: PGTZ
+              value: "America/Recife"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
