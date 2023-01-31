@@ -565,4 +565,4 @@ spec:
               type: DirectoryOrCreate
 ```    
 
-Once you apply the cronjob to your cluster (must be in the same namespace as database), it will backup your database every day at 2AM.
+Once you apply the cronjob to your cluster (must be in the same namespace as database), it will backup your database every day at 10AM.
