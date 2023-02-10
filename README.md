@@ -515,6 +515,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: pgpass
+  namespace: wikijs
 data:
   pgpass: cG9zdGdyZXMud2lraWpzLnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzI6d2lraWpzZGI6d2lraWpzOldpa2lqc1VzZXJQYXNzdzByZA==
 ```
@@ -535,6 +536,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: postgres-backup
+  namespace: wikijs
 spec:
   # Backup the database every day at 10AM
   schedule: "0 10 * * *"
