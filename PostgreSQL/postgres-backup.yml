@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: postgres-backup
+  namespace: wikijs
 spec:
   # Backup the database every day at 10AM
   schedule: "0 10 * * *"
