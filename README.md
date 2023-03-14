@@ -568,3 +568,29 @@ spec:
 ```    
 
 Once you apply the cronjob to your cluster (must be in the same namespace as database), it will backup your database every day at 10AM.
+
+### Restore from a Postgres Backup
+
+To restore from a backup, the process is very simple.
+
+Copy database backup into pod:
+
+kubectl -n wikijs cp backup-02-23-2023-13-00.sql postgres-bcc5c45b8-lnhpl:/tmp/wikijs.sql
+
+To manually do this, you should once again connect to you postgres pod in your shell. The first step is to drop your database. Ensure you have correctly followed the above steps to make sure you don't lose any data. To drop your database run:
+
+```
+psql -U wikijs template1 -c 'drop database wikijsdb;'
+```
+
+Now create your database again, with:
+
+```
+psql -U wikijs template1 -c 'create database wikijsdb;'
+```
+
+Finally you can run psql with:
+
+```
+psql -U wikijs -p 5432 -d wikijsdb -f /tmp/wikijs.sql
+```
