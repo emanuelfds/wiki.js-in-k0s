@@ -1,5 +1,42 @@
 ![wikijs](https://user-images.githubusercontent.com/50842626/207669111-93310e36-fdc5-4f2f-a32c-d1f4a3a4726a.png)
 
+## Before you begin.. 
+
+Para a orquestração do Kubernetes, será utilizado o [K0S](https://docs.k0sproject.io/v1.21.0+k0s.0/).
+
+### 1 - Install kubectl on Linux
+
+>**Note**
+>You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.26 client can communicate with v1.25, v1.26, and v1.27 control planes. Using the latest compatible version of kubectl helps avoid unforeseen issues.
+
+### Download and Install the latest release:
+
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+sudo cat /var/lib/k0s/pki/admin.conf > $HOME/admin.conf
+mkdir -p $HOME/.kube
+cat $HOME/admin.conf >> ~/.kube/config
+```
+
+### 2 - Install Kubernetes (K0S)
+
+```
+curl -sSLf https://get.k0s.sh | sudo sh
+sudo k0s install controller --single
+sudo systemctl start k0scontroller
+sudo systemctl enable k0scontroller
+```
+
+After finishing the installation of K0S and Kubectl, validate the version:
+
+```
+sudo systemctl status k0scontroller
+kubectl version --client
+```
+Now we can proceed with installing and configuring Wiki.js
+
 ## Install and Configure Wiki.js on Kubernetes Cluster
 
 Install and configure Wiki.js on Kubernetes Cluster on your system with the aid of the below steps.
@@ -300,7 +337,7 @@ spec:
 
   kubectl exec -it **[pod-name]** --  psql -h localhost -U admin --password -p 5432 postgresdb
 
-  #### Connect to PostgreSQL
+#### Connect to PostgreSQL
 
 The Kubernetes command line client ships with a feature that lets you connect to a pod directly from your host command line. The kubectl exec command accepts a pod name, any commands that should be executed, and an interactive flag that lets you launch a shell. You’ll use kubectl exec to connect to PostgreSQL pod:
 
