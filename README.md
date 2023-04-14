@@ -4,7 +4,22 @@
 
 Para a orquestração do Kubernetes, será utilizado o [K0S](https://docs.k0sproject.io/v1.21.0+k0s.0/).
 
-### 1 - Install kubectl on Linux
+### 1 - Install Kubernetes (K0S)
+
+```
+curl -sSLf https://get.k0s.sh | sudo sh
+sudo k0s install controller --single
+sudo systemctl start k0scontroller
+sudo systemctl enable k0scontroller
+```
+
+After finishing the installation of K0S and Kubectl, validate the version:
+
+```
+sudo systemctl status k0scontroller
+kubectl version --client
+```
+### 2 - Install kubectl on Linux
 
 >**Note**
 >You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.26 client can communicate with v1.25, v1.26, and v1.27 control planes. Using the latest compatible version of kubectl helps avoid unforeseen issues.
@@ -20,21 +35,6 @@ mkdir -p $HOME/.kube
 cat $HOME/admin.conf >> ~/.kube/config
 ```
 
-### 2 - Install Kubernetes (K0S)
-
-```
-curl -sSLf https://get.k0s.sh | sudo sh
-sudo k0s install controller --single
-sudo systemctl start k0scontroller
-sudo systemctl enable k0scontroller
-```
-
-After finishing the installation of K0S and Kubectl, validate the version:
-
-```
-sudo systemctl status k0scontroller
-kubectl version --client
-```
 Now we can proceed with installing and configuring Wiki.js
 
 ## Install and Configure Wiki.js on Kubernetes Cluster
