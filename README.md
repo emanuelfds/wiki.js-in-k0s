@@ -4,7 +4,23 @@
 
 Para a orquestração do Kubernetes, será utilizado o [K0S](https://docs.k0sproject.io/v1.21.0+k0s.0/).
 
-### 1 - Install kubectl on Linux
+### 1 - Install Kubernetes (K0S)
+
+```
+curl -sSLf https://get.k0s.sh | sudo sh
+sudo k0s install controller --single
+sudo systemctl start k0scontroller
+sudo systemctl enable k0scontroller
+```
+
+After finishing the installation of K0S and Kubectl, validate the version:
+
+```
+sudo systemctl status k0scontroller
+kubectl version --client
+```
+
+### 2 - Install kubectl on Linux
 
 >**Note**
 >You must use a kubectl version that is within one minor version difference of your cluster. For example, a v1.26 client can communicate with v1.25, v1.26, and v1.27 control planes. Using the latest compatible version of kubectl helps avoid unforeseen issues.
@@ -20,21 +36,6 @@ mkdir -p $HOME/.kube
 cat $HOME/admin.conf >> ~/.kube/config
 ```
 
-### 2 - Install Kubernetes (K0S)
-
-```
-curl -sSLf https://get.k0s.sh | sudo sh
-sudo k0s install controller --single
-sudo systemctl start k0scontroller
-sudo systemctl enable k0scontroller
-```
-
-After finishing the installation of K0S and Kubectl, validate the version:
-
-```
-sudo systemctl status k0scontroller
-kubectl version --client
-```
 Now we can proceed with installing and configuring Wiki.js
 
 ## Install and Configure Wiki.js on Kubernetes Cluster
@@ -453,57 +454,64 @@ spec:
       labels:
         app: wikijs
     spec:
+      volumes:
+        - name: date-config
+          hostPath:
+            path: /etc/localtime
       containers:
-       - name: wikijs
-         image: requarks/wiki:2
-         #image: requarks/wiki:latest
-         imagePullPolicy: "IfNotPresent"
-         ports:
-          - containerPort: 3000
-            name: http
-         resources:
-            limits:
-              cpu: 500m
-              memory: 512Mi
-            requests:
-              cpu: 250m
-              memory: 256Mi
-         env:
-            - name: HA_ACTIVE
-              valueFrom:
-                configMapKeyRef:
-                  key: HA_ACTIVE
-                  name: postgres-config
-            - name: DB_TYPE
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_TYPE
-                  name: postgres-config
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_HOST
-                  name: postgres-config
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_PORT
-                  name: postgres-config
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                 name: postgres-secret
-                 key: DATABASE_NAME
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                 name: postgres-secret
-                 key: DATABASE_USER
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                 name: postgres-secret
-                 key: DATABASE_PASSWORD
+      - name: "wikijs"
+        image: requarks/wiki:2.5
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 3000
+          name: http
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        env:
+          - name: HA_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                key: HA_ACTIVE
+                name: postgres-config
+          - name: DB_TYPE
+            valueFrom:
+              configMapKeyRef:
+                key: DB_TYPE
+                name: postgres-config
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: DB_HOST
+                name: postgres-config
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                key: DB_PORT
+                name: postgres-config
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: DATABASE_NAME
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: DATABASE_USER
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: DATABASE_PASSWORD
+        volumeMounts:
+            - name: date-config
+              mountPath: /etc/localtime
+
       
 ```
 
