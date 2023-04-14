@@ -19,6 +19,7 @@ After finishing the installation of K0S and Kubectl, validate the version:
 sudo systemctl status k0scontroller
 kubectl version --client
 ```
+
 ### 2 - Install kubectl on Linux
 
 >**Note**
