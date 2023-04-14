@@ -2,7 +2,7 @@
 
 ## Before you begin.. 
 
-Para a orquestração do Kubernetes, será utilizado o [K0S](https://docs.k0sproject.io/v1.21.0+k0s.0/).
+For Kubernetes orchestration, the will be used [K0S](https://docs.k0sproject.io/v1.21.0+k0s.0/).
 
 ### 1 - Install Kubernetes (K0S)
 
