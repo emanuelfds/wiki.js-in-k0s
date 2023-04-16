@@ -449,6 +449,7 @@ spec:
   selector:
     matchLabels:
       app: wikijs
+  replicas: 1    
   template:
     metadata:
       labels:
