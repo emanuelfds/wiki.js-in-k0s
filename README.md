@@ -5,8 +5,11 @@
 </div>
 
 ## What's Wiki.js
+ <p align="justify">
+ 
+Wiki.js is a fully customizable and modular wiki engine written entirely in JavaScript.  It comes with a rich set of features, and works smoothly on different systems and environments. It is also an extremely fast web application with an attractive design, plus it supports many database interfaces with primary support for PostgreSQL. More information in [Wiki.js](https://js.wiki/) 
 
-Wiki.js is a fully customizable and modular wiki engine written entirely in JavaScript.  It comes with a rich set of features, and works smoothly on different systems and environments. It is also an extremely fast web application with an attractive design, plus it supports many database interfaces with primary support for PostgreSQL. More information in [Wiki.js](https://js.wiki/)
+</p>
 
 ## Before you begin.. 
 
