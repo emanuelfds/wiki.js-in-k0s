@@ -1,4 +1,12 @@
-![wikijs](https://user-images.githubusercontent.com/50842626/207669111-93310e36-fdc5-4f2f-a32c-d1f4a3a4726a.png)
+<div align="center">
+
+![Wikijs](./Images/wikijs.png)
+
+</div>
+
+## What's Wiki.js
+
+Wiki.js is a fully customizable and modular wiki engine written entirely in JavaScript.  It comes with a rich set of features, and works smoothly on different systems and environments. It is also an extremely fast web application with an attractive design, plus it supports many database interfaces with primary support for PostgreSQL. More information in [Wiki.js](https://js.wiki/)
 
 ## Before you begin.. 
 
