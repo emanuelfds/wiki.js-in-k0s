@@ -15,6 +15,20 @@ spec:
       labels:
         app: wikijs
     spec:
+      tolerations:
+        - key: "servicesonly"
+          operator: "Equal"
+          value: "true"
+          effect: "PreferNoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: apps
+                operator: In
+                values:
+                - services
       volumes:
         - name: date-config
           hostPath:
