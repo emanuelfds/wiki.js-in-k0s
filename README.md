@@ -14,16 +14,16 @@ For Kubernetes orchestration, the will be used [K0S](https://docs.k0sproject.io/
 
 ### 1 - Install Kubernetes (K0S)
 
-```
+```bash
 curl -sSLf https://get.k0s.sh | sudo sh
-sudo k0s install controller --single
+sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
 sudo systemctl start k0scontroller
 sudo systemctl enable k0scontroller
 ```
 
 After finishing the installation of K0S and Kubectl, validate the version:
 
-```
+```bash
 sudo systemctl status k0scontroller
 kubectl version --client
 ```
@@ -35,7 +35,7 @@ kubectl version --client
 
 ### Download and Install the latest release:
 
-```
+```bash
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
@@ -632,6 +632,9 @@ kubectl -n wikijs cp backup-02-23-2023-13-00.sql postgres-bcc5c45b8-lnhpl:/tmp/w
 ```
 
 To manually do this, you should once again connect to you postgres pod in your shell. The first step is to drop your database. Ensure you have correctly followed the above steps to make sure you don't lose any data. To drop your database run:
+
+>**Note**
+> Application Wiki.js scale to 0 before drop database wikijsdb.
 
 ```
 psql -U wikijs template1 -c 'drop database wikijsdb;'
