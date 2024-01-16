@@ -16,10 +16,16 @@ For Kubernetes orchestration, the will be used [K0S](https://docs.k0sproject.io/
 
 ```bash
 curl -sSLf https://get.k0s.sh | sudo sh
-sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
+sudo k0s install controller --single 
 sudo systemctl start k0scontroller
 sudo systemctl enable k0scontroller
 ```
+>**Note** 
+> To install with taint, add the information below:
+
+```bash
+sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
+``````
 
 After finishing the installation of K0S and Kubectl, validate the version:
 
