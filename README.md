@@ -16,10 +16,16 @@ For Kubernetes orchestration, the will be used [K0S](https://docs.k0sproject.io/
 
 ```bash
 curl -sSLf https://get.k0s.sh | sudo sh
-sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
+sudo k0s install controller --single 
 sudo systemctl start k0scontroller
 sudo systemctl enable k0scontroller
 ```
+>**Note** 
+> To install with taint, add the information below:
+
+```bash
+sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
+``````
 
 After finishing the installation of K0S and Kubectl, validate the version:
 
@@ -54,22 +60,23 @@ Install and configure Wiki.js on Kubernetes Cluster on your system with the aid 
 
 Normally, a namespace is used to partition a single Kubernetes cluster into many virtual clusters. Begin by creating the namespace for wiki.js as below.
 
-```
+```bash
 kubectl create namespace wikijs
 ```
 
 Verify the namespace was created
 
-```
+```bash
 kubectl get namespaces
 ```
+
 ### Step 2 – Create the Secrets file
 
 The secret file contains the username and passwords to be created for the below database.
 
 Generate your own credentials for the **`DB_NAME`**, **`DB_USER`** and **`DB_PASS`** variables. See below examples:
 
-```
+```bash
 # Wiki.js PostgreSQL database name
 $ echo -n 'wikijsdb' | base64
 d2lraWpzZGI=
@@ -87,13 +94,13 @@ The fields **`DB_NAME`**, **`DB_USER`** and **`DB_PASS`** are your secrets, and 
 
 Now create a secret file as below.
 
-```
+```bash
 vim wikijs-secret.yaml
 ```
 
 In the file, add the below lines replacing appropriately.
 
-```
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -108,13 +115,13 @@ data:
 
 Apply the made changes.
 
-```
+```bash
 kubectl apply -f wikijs-secret.yaml
 ```
 
 Verify if your change is made.
 
-```
+```bash
 kubectl get secret -n wikijs
 ```
 ### Step 3 – Create the ConfigMap file
@@ -127,13 +134,13 @@ Here i’m using database type as postgres, you can your own database type from 
 
 Now create a ConfigMap file as below.
 
-```
+```bash
 vim wikijs-configmap.yaml
 ```
 
 In the file, add the below lines replacing appropriately.
 
-```
+```yaml
 apiVersion: v1
 data:
   DB_HOST: "postgres.wikijs.svc.cluster.local"
@@ -148,13 +155,13 @@ metadata:
 
 Apply the made changes.
 
-```
+```bash
 kubectl apply -f wikijs-configmap.yaml
 ```
 
 Verify if your change is made.
 
-```
+```bash
 kubectl get configmaps -n wikijs
 ```
 ### Step 4 – Create the Database Pod for wiki.js
@@ -171,19 +178,19 @@ To deploy stateful applications such as a PostgreSQL database, for example, you�
 
 For this tutorial, you will move forward with a local volume, using **`/mnt/data`** as the path to volume:
 
-```
+```bash
 sudo mkdir /mnt/data
 ```
 
 Create the postgres-pvc-pv.yaml file as below.
 
-```
+```bash
 vim postgres-pvc-pv.yaml
 ```
 
 In the file, add the below lines. Here do not alter anything.
 
-```
+```yaml
 kind: PersistentVolume
 apiVersion: v1
 metadata:
@@ -219,13 +226,13 @@ spec:
 
 Run the following command to create a new PVC and PV for your PostgreSQL deployment:
 
-```
+```bash
 kubectl apply -f postgres-pvc-pv.yaml 
 ```
 
 Use the command below to check if PVC is bound to PV:
 
-```
+```bash
 kubectl get pvc
 ```
 
@@ -237,13 +244,13 @@ Deployments are a way to manage rolling out and updating applications in a Kuber
 
 After creating PVCs, PVs, and Secrets, you can create a stateful application by creating a stateful pod as follows:
 
-```
+```bash
 vim postgres-deployment.yaml
 ```
 
 In the file, add the below lines. Here do not alter anything. 
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -305,7 +312,7 @@ spec:
 
 The following command will create a new PostgreSQL deployment:
 
-```
+```bash
 kubectl apply -f postgres-deployment.yaml
 ```
 
@@ -313,13 +320,13 @@ kubectl apply -f postgres-deployment.yaml
 
 Kubernetes services help you expose ports in various ways, including through a NodePort. NodePorts expose a service on every node in a cluster, meaning that the service is accessible from outside the cluster. This can be useful for services that need to be accessible from outside the cluster. To keep things simple for this tutorial, you’ll expose the database using NodePort with the help of the following manifest:
 
-```
+```bash
 vim postgres-service.yaml
 ```
 
 Now we will configure PostgreSQL Service.
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -338,19 +345,19 @@ spec:
     port: 5432 
 ```
   
-  The command below will create a new PostgreSQL service which helps you to connect to psql:
+The command below will create a new PostgreSQL service which helps you to connect to psql:
 
-  ```
-  vim kubectl apply -f postgres-service.yaml 
-  ```
+```bash
+vim kubectl apply -f postgres-service.yaml 
+```
 
-  kubectl exec -it **[pod-name]** --  psql -h localhost -U admin --password -p 5432 postgresdb
+kubectl exec -it **[pod-name]** --  psql -h localhost -U admin --password -p 5432 postgresdb
 
 #### Connect to PostgreSQL
 
 The Kubernetes command line client ships with a feature that lets you connect to a pod directly from your host command line. The kubectl exec command accepts a pod name, any commands that should be executed, and an interactive flag that lets you launch a shell. You’ll use kubectl exec to connect to PostgreSQL pod:
 
-```
+```bash
 kubectl exec -n [namespace] -it [pod-name] -- psql -h localhost -U wikijs --password -p 5432 wikijsdb
 ```
 
@@ -360,7 +367,7 @@ If you prefer to connect to the PostgreSQL shell using the PostgreSQL client, ru
 
 1. Run the psql command below to connect to the PostgreSQL pod through the ClusterIP with the port PostgreSQL.
 
-```
+```bash
 psql -h 10.103.35.241 -U wikijs --password -p 5432 wikijsdb
 ```
 
@@ -368,7 +375,7 @@ psql -h 10.103.35.241 -U wikijs --password -p 5432 wikijsdb
 
 3. Finally, run the query below to get information about your connection and list databases.
 
-```
+```bash
 # Checking PostgreSQL connection
 \conninfo
 
@@ -380,7 +387,7 @@ psql -h 10.103.35.241 -U wikijs --password -p 5432 wikijsdb
 
 Here, we can deploy the service as a NodePort, ClusterIP, or load balancer. First, create the file
 
-```
+```bash
 vim wikijs-service.yaml
 ```
 
@@ -388,7 +395,7 @@ Now we will configure Wiki.js.
 
 Service Type as ClusterIP.
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -405,7 +412,7 @@ spec:
 
 Or, Service Type as LoadBalancer
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -425,13 +432,13 @@ Here i deployed the service Type as ClusterIP. If you want, you can deploy servi
 
 The command below will create a Wikijs service
 
-```
+```bash
 kubectl apply -f wikijs-service.yaml
 ```
 
 Verify if your change is made.
 
-```
+```bash
 kubectl get svc -n wikijs
 ```
 
@@ -439,13 +446,13 @@ kubectl get svc -n wikijs
 
 Now proceed to the wiki.js deployment.
 
-```
+```bash
 vim wikijs-deployment.yaml
 ```
 
 In the file, add the below lines, here don’t replace anything, we are simply mapping the above configs. I have set the imagePullPolicy parameter to Always in order to always get the latest Wiki.js release.
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -519,16 +526,14 @@ spec:
                 key: DATABASE_PASSWORD
         volumeMounts:
             - name: date-config
-              mountPath: /etc/localtime
-
-      
+              mountPath: /etc/localtime      
 ```
 
 Mapping the configMap and secret variables to the Deployment. Pulled the official wikijs docker image.
 
 Now apply the made changes.
 
-```
+```bash
 kubectl apply -f wikijs-deployment.yaml
 ```
 
@@ -540,31 +545,31 @@ Create a secret with postgres admin password. It needs to be in the format that 
 
 If you don’t feel like opening the link above, here is the format of the file:
 
-```
+```bash
 hostname:port:database:username:password
 ```
 
 So for a postgres Depoyment/StatefulSet with database test_database that is exposed as a service postgres on port 5432, your file should look something like this:
 
-```
+```bash
 postgres.wikijs.svc.cluster.local:5432:wikijsdb:wikijs:WikijsUserPassw0rd
 ```
 
 Kubernetes secrets require data to be base64 encoded, so to create a secret value, invoke the command below in bash (you need to have base64 tool installed as well):
 
-```
+```bash
 echo "postgres.wikijs.svc.cluster.local:5432:wikijsdb:wikijs:WikijsUserPassw0rd" | base64
 ```
 
 The output will be:
 
-```
+```bash
 cG9zdGdyZXMud2lraWpzLnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzI6d2lraWpzZGI6d2lraWpzOldpa2lqc1VzZXJQYXNzdzByZA==
 ```
 
 Create this is the value into your kubernetes secret:
 
-```
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -579,13 +584,13 @@ data:
 
 Example:
 
-```
+```bash
 printf "%s" 'cdt_main!@#$' | base64
 ```
 
 Create this is the value into your kubernetes CronJobs:
 
-```
+```yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -627,7 +632,7 @@ Once you apply the cronjob to your cluster (must be in the same namespace as dat
 
 Copy database backup into pod:
 
-```
+```bash
 kubectl -n wikijs cp backup-02-23-2023-13-00.sql postgres-bcc5c45b8-lnhpl:/tmp/wikijs.sql
 ```
 
@@ -636,18 +641,18 @@ To manually do this, you should once again connect to you postgres pod in your s
 >**Note**
 > Application Wiki.js scale to 0 before drop database wikijsdb.
 
-```
+```bash
 psql -U wikijs template1 -c 'drop database wikijsdb;'
 ```
 
 Now create your database again, with:
 
-```
+```bash
 psql -U wikijs template1 -c 'create database wikijsdb;'
 ```
 
 Finally you can run psql with:
 
-```
+```bash
 psql -U wikijs -p 5432 -d wikijsdb -f /tmp/wikijs.sql
 ```
