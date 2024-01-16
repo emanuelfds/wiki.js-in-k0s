@@ -14,7 +14,7 @@ For Kubernetes orchestration, the will be used [K0S](https://docs.k0sproject.io/
 
 ### 1 - Install Kubernetes (K0S)
 
-```
+```bash
 curl -sSLf https://get.k0s.sh | sudo sh
 sudo k0s install controller --single --labels=apps=services --taints=servicesonly=true:PreferNoSchedule
 sudo systemctl start k0scontroller
@@ -23,7 +23,7 @@ sudo systemctl enable k0scontroller
 
 After finishing the installation of K0S and Kubectl, validate the version:
 
-```
+```bash
 sudo systemctl status k0scontroller
 kubectl version --client
 ```
@@ -35,7 +35,7 @@ kubectl version --client
 
 ### Download and Install the latest release:
 
-```
+```bash
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
